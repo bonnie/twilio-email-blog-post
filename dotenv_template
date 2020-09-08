@@ -1,0 +1,6 @@
+# rename file to .env and fill out account data
+SENDGRID_API_KEY = ""
+IEXCLOUD_API_VERSION = ""
+IEXCLOUD_PUBLIC_KEY = ""
+IEXCLOUD_SECRET_KEY = ""
+EMAIL = ""

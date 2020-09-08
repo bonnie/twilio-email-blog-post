@@ -1,0 +1,16 @@
+{
+  "name": "daily-stock-email",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sendgrid/mail": "^7.2.5",
+    "dotenv": "^8.2.0",
+    "iexcloud_api_wrapper": "^1.1.5"
+  }
+}
