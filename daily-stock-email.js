@@ -1,7 +1,7 @@
 require('dotenv')
 const iex = require( 'iexcloud_api_wrapper' ) // gets auth from .env automatically
-const sgMail = require('@sendgrid/mail');
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 const getMoverData = async() => {
   try {
@@ -9,14 +9,15 @@ const getMoverData = async() => {
     const losers = await iex.list('losers')
     return { gainers, losers }
   }
-  catch (error) {
-    console.error(`Data retrieval failure! ${error}`)
-    // nonzero exit indicates failure
-    process.exit(-1);
+  catch(error) {
+    console.error(`Could not get data: ${error}`)
+    process.exit(-1)  // nonzero exit code indicates failure
   }
 }
 
 const generateTable = (stockData) => {
+  stockData = stockData.sort((a, b) => 
+    Math.abs(a.changePercent) < Math.abs(b.changePercent))
   const rows = stockData.map(data => 
     `<tr>
       <td>${Math.round(data.changePercent * 10000) / 100}</td>
@@ -69,14 +70,12 @@ const generateHtmlMail = (gainers, losers) => {
   </html>`
 }
 
-const sendMoverEmail = async () => {
-  const { gainers, losers } = await getMoverData()
-  const htmlMail = generateHtmlMail(gainers, losers)
+const sendEmail = async (htmlEmailContents) => {
   const msg = {
     to: process.env.EMAIL,
     from: process.env.EMAIL,
     subject: 'Today\'s biggest stock market movers',
-    html: htmlMail,
+    html: htmlEmailContents,
   }
   try {
     await sgMail.send(msg)
@@ -84,6 +83,12 @@ const sendMoverEmail = async () => {
   catch (error) {
     console.error(`Could not send message: ${error}`)
   }
+}
+
+const sendMoverEmail = async () => {
+  const { gainers, losers } = await getMoverData()
+  const htmlMail = generateHtmlMail(gainers, losers)
+  await sendEmail(htmlMail)
 }
 
 sendMoverEmail()
